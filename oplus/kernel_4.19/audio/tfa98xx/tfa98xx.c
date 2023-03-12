@@ -1330,7 +1330,7 @@ static ssize_t tfa98xx_dbgfs_start_set(struct file *file,
 static int tfa98xx_speaker_recalibration(struct tfa_device *tfa,
 					 int *speakerImpedance)
 {
-	int err, error = Tfa98xx_Error_Ok;
+	int error = Tfa98xx_Error_Ok;
 	int cal_profile = -1;
 	int profile = -1;
 
@@ -1354,7 +1354,7 @@ static int tfa98xx_speaker_recalibration(struct tfa_device *tfa,
 		pr_err("%s Calibration sucessful!\n", __func__);
 		*speakerImpedance = tfa->mohm[0];
 		if (TFA_GET_BF(tfa, PWDN) != 0)
-			err = tfa98xx_powerdown(tfa, 0);  //leave power off
+			tfa98xx_powerdown(tfa, 0);  //leave power off
 		tfaRunUnmute(tfa);	/* unmute */
 	}
 	return error;
@@ -3376,9 +3376,8 @@ tfa98xx_read_dsp(struct tfa_device *tfa,
 	//mutex_lock(&tfa98xx->dsp_lock);
 #ifdef CONFIG_MTK_PLATFORM
 	uint32_t DataLength = 0;
-	enum Tfa98xx_Error error;
 
-	error = tfa98xx_receive_data_from_dsp(
+	tfa98xx_receive_data_from_dsp(
 		result_buffer, num_bytes, &DataLength);
 #else
 	ret = send_tfa_cal_apr(result_buffer, num_bytes, true);
